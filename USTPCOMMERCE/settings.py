@@ -85,11 +85,11 @@ WSGI_APPLICATION = 'USTPCOMMERCE.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'user',         
+        'NAME': 'accounts',         
         'USER': 'root',          
-        'PASSWORD': '',          
+        'PASSWORD': 'Jimjimmarg123',          
         'HOST': 'localhost',    
-        'PORT': '3306',          
+        'PORT': '3307',          
     }
 }
 
