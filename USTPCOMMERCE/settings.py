@@ -54,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'ustp_commerce_api.middlewares.firebase_token_required',
+
 ]
 
 ROOT_URLCONF = 'USTPCOMMERCE.urls'
@@ -82,10 +84,16 @@ WSGI_APPLICATION = 'USTPCOMMERCE.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'user',         
+        'USER': 'root',          
+        'PASSWORD': '',          
+        'HOST': 'localhost',    
+        'PORT': '3306',          
     }
 }
+
+
 
 
 # Password validation
