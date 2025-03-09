@@ -1,7 +1,6 @@
-from firebase_admin import credentials, initialize_app
-
-from firebase_config import cred
+from firebase_admin import initialize_app
+from ustp_commerce_api.firebase_config import cred
 
 initialize_app(cred)
 
-print("Firebase connected successfully!")
+print("✅ Firebase connected successfully!")

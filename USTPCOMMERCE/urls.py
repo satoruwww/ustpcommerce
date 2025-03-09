@@ -8,5 +8,5 @@ def home(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),  # Keep the homepage
-    path('api/', include('ustp_commerce_api.urls')),  
+    path('api/', include('ustp_commerce_api.urls')),  # Include API routes
 ]
