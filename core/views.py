@@ -1,15 +1,36 @@
-# views.py
-
 from django.http import JsonResponse
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 
-from .models import Product, Customer, Order, OrderItem, CustomUser
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import (
-    ProductSerializer, CustomerSerializer, OrderSerializer, OrderItemSerializer,
-    CustomUserSerializer
+    RegisterSerializer, CustomUserSerializer,
+    ProductSerializer, CustomerSerializer,
+    OrderSerializer, OrderItemSerializer,
+    CustomTokenObtainPairSerializer
 )
+
+from .models import CustomUser, Product, Customer, Order, OrderItem
+
+
+# ── Registration Endpoint ───────────────────────────────────────────
+@api_view(['POST'])
+@permission_classes([AllowAny])  # Allow anyone to register without authentication
+def register_user(request):
+    """
+    POST /api/auth/register/
+    Required JSON body: { "email": "...", "full_name": "...", "password": "..." }
+    """
+    serializer = RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            {'message': 'User registered successfully'},
+            status=status.HTTP_201_CREATED
+        )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 🌐 Welcome message
@@ -17,26 +38,23 @@ def api_home(request):
     return JsonResponse({"message": "Welcome to the USTP Commerce API!"})
 
 
-# 🔒 Firebase auth-protected view
+# 🔒 Firebase auth-protected view (you may remove this later if skipping Firebase)
 def protected_view(request):
     firebase_user = getattr(request, 'firebase_user', None)
     if not firebase_user:
         return JsonResponse({'error': 'Not authenticated'}, status=401)
-
     return JsonResponse({
         'message': f'Hello {firebase_user["email"]}, you are authenticated!'
     })
 
 
-# 🔐 Firebase login/register
+# 🔐 Firebase login/register (you may remove if skipping Firebase)
 def login_or_register(request):
     firebase_user = getattr(request, 'firebase_user', None)
     if not firebase_user:
         return JsonResponse({'error': 'Not authenticated'}, status=401)
-
     uid = firebase_user['uid']
     email = firebase_user['email']
-
     user, created = CustomUser.objects.get_or_create(
         uid=uid,
         defaults={
@@ -44,7 +62,6 @@ def login_or_register(request):
             'full_name': firebase_user.get('name', 'Anonymous')
         }
     )
-
     return JsonResponse({
         'message': 'Login successful',
         'user': {
@@ -116,3 +133,8 @@ class OrderViewSet(viewsets.ModelViewSet):
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
+
+
+# -- JWT login view using your custom serializer --
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
