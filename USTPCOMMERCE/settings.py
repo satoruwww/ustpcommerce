@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'rest_framework.authtoken',
+    'core',
 ]
 
 AUTH_USER_MODEL = 'ustp_commerce_api.CustomUser'
@@ -78,8 +79,12 @@ WSGI_APPLICATION = 'USTPCOMMERCE.wsgi.application'
 # ✅ Database (use SQLite for development)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ustpcommerce',          
+        'USER': 'root',                   
+        'PASSWORD': 'Jistar123',
+        'HOST': '127.0.0.1',
+        'PORT': '3307',
     }
 }
 
