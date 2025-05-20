@@ -21,7 +21,7 @@ ALLOWED_HOSTS = [
 
 # ✅ Installed apps
 INSTALLED_APPS = [
-    # Third‑party apps
+    # Third-party apps
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
@@ -42,20 +42,27 @@ INSTALLED_APPS = [
     "core",
 ]
 
-AUTH_USER_MODEL = "ustp_commerce_api.CustomUser"
+# Custom user model
+AUTH_USER_MODEL = 'ustp_commerce_api.CustomUser'
 
-# ✅ Django REST Framework
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    "core.backends.EmailBackend",  # <-- this is what lets auth work via email
+    "django.contrib.auth.backends.ModelBackend",  # fallback
+]
+
+# Django REST Framework config
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "rest_framework.authentication.TokenAuthentication",  # optional: keep for legacy support
+        "rest_framework.authentication.TokenAuthentication",  # optional legacy support
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
 }
 
-# ✅ Simple JWT configuration
+# Simple JWT config
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -63,7 +70,7 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
-# ✅ Middleware
+# Middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -95,7 +102,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "USTPCOMMERCE.wsgi.application"
 
-# ✅ Database (use MySQL for development)
+# Database config (MySQL)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -107,7 +114,7 @@ DATABASES = {
     }
 }
 
-# ✅ Password validators
+# Password validators
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -115,14 +122,14 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# ✅ Internationalization
+# Internationalization
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# ✅ Static files
+# Static files
 STATIC_URL = "static/"
 
-# ✅ Default primary key field
+# Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

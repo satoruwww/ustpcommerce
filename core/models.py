@@ -62,6 +62,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         return self.email
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.user.full_name}'s profile"
+
+
 class Category(models.Model):
     name = models.CharField(max_length=255)
 
@@ -109,11 +117,3 @@ class OrderItem(models.Model):
 
     class Meta:
         ordering = ["id"]
-
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    bio = models.TextField(blank=True)
-
-    def __str__(self):
-        return f"{self.user.full_name}'s profile"

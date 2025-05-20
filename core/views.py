@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from rest_framework_simplejwt.views import TokenObtainPairView
+
 from .serializers import (
     RegisterSerializer, CustomUserSerializer,
     ProductSerializer, CustomerSerializer,
@@ -38,7 +39,7 @@ def api_home(request):
     return JsonResponse({"message": "Welcome to the USTP Commerce API!"})
 
 
-# 🔒 Firebase auth-protected view (you may remove this later if skipping Firebase)
+# 🔒 Firebase auth-protected view (optional, can remove if skipping Firebase)
 def protected_view(request):
     firebase_user = getattr(request, 'firebase_user', None)
     if not firebase_user:
@@ -48,7 +49,7 @@ def protected_view(request):
     })
 
 
-# 🔐 Firebase login/register (you may remove if skipping Firebase)
+# 🔐 Firebase login/register (optional, can remove if skipping Firebase)
 def login_or_register(request):
     firebase_user = getattr(request, 'firebase_user', None)
     if not firebase_user:
@@ -105,7 +106,7 @@ def get_user_by_uid(request, uid):
         return Response({'error': 'User not found'}, status=404)
 
 
-# 🧪 Mock test users
+# 🧪 Mock test users (simple dummy data)
 def get_mock_users(request):
     data = [
         {"id": 1, "name": "John Doe"},

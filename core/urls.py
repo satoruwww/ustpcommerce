@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+
 from .views import (
     api_home, protected_view, login_or_register, register_user,
     UserProfileListCreateView, UserProfileDetailView,
@@ -18,12 +19,10 @@ urlpatterns = [
     path('', api_home, name='api-home'),
 
     # Auth endpoints
-    path('auth/', login_or_register, name='login-or-register'),  # Firebase login/register
-    path('auth/register/', register_user, name='register'),      # Classic email registration
-    path('auth/protected/', protected_view, name='protected'),
-
-    # JWT token login (MySQL auth)
-    path('auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/', login_or_register, name='login-or-register'),  
+    path('auth/register/', register_user, name='register'),      
+    path('auth/protected/', protected_view, name='protected'),   
+    path('auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),  
 
     # User profile endpoints
     path('users/', UserProfileListCreateView.as_view(), name='user-list-create'),
@@ -31,9 +30,9 @@ urlpatterns = [
     path('users/all/', get_users, name='get-users'),
     path('users/uid/<str:uid>/', get_user_by_uid, name='get-user-by-uid'),
 
-    # Mock users
+    # Mock users endpoint
     path('mock-users/', get_mock_users, name='mock-users'),
 
-    # Store CRUD endpoints for products, customers, orders, order-items
+    # Store API endpoints via router
     path('store/', include(router.urls)),
 ]
