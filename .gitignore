@@ -1,6 +1,1 @@
-firebase_config.json 
-.env 
-*.pyc 
-__pycache__/ 
-build/ 
-.dart_tool/ 
+backup_ustp_commerce_api/ustp_commerce_api/

@@ -18,11 +18,11 @@ router.register(r'order-items', OrderItemViewSet)
 urlpatterns = [
     path('', api_home, name='api-home'),
 
-    # Auth endpoints
-    path('auth/', login_or_register, name='login-or-register'),  
-    path('auth/register/', register_user, name='register'),      
-    path('auth/protected/', protected_view, name='protected'),   
-    path('auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),  
+    # Authentication endpoints
+    path('auth/', login_or_register, name='login-or-register'),
+    path('auth/register/', register_user, name='register'),
+    path('auth/protected/', protected_view, name='protected'),
+    path('auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
 
     # User profile endpoints
     path('users/', UserProfileListCreateView.as_view(), name='user-list-create'),
@@ -33,6 +33,6 @@ urlpatterns = [
     # Mock users endpoint
     path('mock-users/', get_mock_users, name='mock-users'),
 
-    # Store API endpoints via router
+    # Store API endpoints from router
     path('store/', include(router.urls)),
 ]

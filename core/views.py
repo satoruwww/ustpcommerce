@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from rest_framework import generics, viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -16,14 +15,10 @@ from .serializers import (
 from .models import CustomUser, Product, Customer, Order, OrderItem
 
 
-# ── Registration Endpoint ───────────────────────────────────────────
+# ── Registration Endpoint ───────────────────────────────
 @api_view(['POST'])
-@permission_classes([AllowAny])  # Allow anyone to register without authentication
+@permission_classes([AllowAny])
 def register_user(request):
-    """
-    POST /api/auth/register/
-    Required JSON body: { "email": "...", "full_name": "...", "password": "..." }
-    """
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -34,26 +29,27 @@ def register_user(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# 🌐 Welcome message
+@api_view(['GET'])
 def api_home(request):
-    return JsonResponse({"message": "Welcome to the USTP Commerce API!"})
+    return Response({"message": "Welcome to the USTP Commerce API!"})
 
 
-# 🔒 Firebase auth-protected view (optional, can remove if skipping Firebase)
+@api_view(['GET'])
 def protected_view(request):
     firebase_user = getattr(request, 'firebase_user', None)
     if not firebase_user:
-        return JsonResponse({'error': 'Not authenticated'}, status=401)
-    return JsonResponse({
+        return Response({'error': 'Not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+    return Response({
         'message': f'Hello {firebase_user["email"]}, you are authenticated!'
     })
 
 
-# 🔐 Firebase login/register (optional, can remove if skipping Firebase)
+@api_view(['GET'])
 def login_or_register(request):
     firebase_user = getattr(request, 'firebase_user', None)
     if not firebase_user:
-        return JsonResponse({'error': 'Not authenticated'}, status=401)
+        return Response({'error': 'Not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+
     uid = firebase_user['uid']
     email = firebase_user['email']
     user, created = CustomUser.objects.get_or_create(
@@ -63,7 +59,7 @@ def login_or_register(request):
             'full_name': firebase_user.get('name', 'Anonymous')
         }
     )
-    return JsonResponse({
+    return Response({
         'message': 'Login successful',
         'user': {
             'id': user.id,
@@ -75,19 +71,16 @@ def login_or_register(request):
     })
 
 
-# 📋 List/Create users
 class UserProfileListCreateView(generics.ListCreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 
 
-# 🔍 Retrieve/Update/Delete user
 class UserProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 
 
-# 🧾 Get all users (function-based)
 @api_view(['GET'])
 def get_users(request):
     users = CustomUser.objects.all()
@@ -95,7 +88,6 @@ def get_users(request):
     return Response(serializer.data)
 
 
-# 🔎 Get user by Firebase UID
 @api_view(['GET'])
 def get_user_by_uid(request, uid):
     try:
@@ -103,19 +95,18 @@ def get_user_by_uid(request, uid):
         serializer = CustomUserSerializer(user)
         return Response(serializer.data)
     except CustomUser.DoesNotExist:
-        return Response({'error': 'User not found'}, status=404)
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-# 🧪 Mock test users (simple dummy data)
+@api_view(['GET'])
 def get_mock_users(request):
     data = [
         {"id": 1, "name": "John Doe"},
         {"id": 2, "name": "Jane Doe"},
     ]
-    return JsonResponse(data, safe=False)
+    return Response(data)
 
 
-# 🛍️ API ViewSets for core models
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -136,6 +127,5 @@ class OrderItemViewSet(viewsets.ModelViewSet):
     serializer_class = OrderItemSerializer
 
 
-# -- JWT login view using your custom serializer --
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
